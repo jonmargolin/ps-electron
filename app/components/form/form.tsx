@@ -1,28 +1,26 @@
 import * as React from 'react';
 import Input from './../ui/input/input';
 import Button from './../ui/button/button';
-import {IProps} from '../Counter';
+import Iform from './../form/module';
 let styles = require('./form.scss');
 
-const eltype = {type: 'text',
-    placeholder: 'Your Name'}
-    const validation = {
-            required: true
-        }
-export interface IProps extends  React.Component<any>{}
-export  class Form extends React.Component<any> {
+export  class Form extends React.Component<Iform> {
+    constructor(props : Iform) {
+        super(props);
+    }
     render() {
+
         return (
             <div className={styles.formContainer}>
                 <div className={styles.inputContainer}>
                     <Input
                         key={1}
-                        elementType={'input'}
-                        elementConfig={eltype}
-                        value={''}
-                        invalid={true}
-                        shouldValidate={validation}
-                        touched={false}/>
+                        elementType = {this.props.input.elementType}
+                        elementConfig={this.props.input.elementConfig}
+                        value={this.props.input.value}
+                        invalid={this.props.input.invalid}
+                        shouldValidate={this.props.input.shouldValidate.required}
+                        touched={this.props.input.touched}/>
                 </div>
                 <div className={styles.inputContainer}>
                     <Button>submit </Button>

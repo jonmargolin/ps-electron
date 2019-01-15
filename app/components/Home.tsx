@@ -1,12 +1,18 @@
 import * as React from 'react';
 import Form  from  './../components/form/form';
+import Iform from './form/module';
 let styles = require('./Home.scss');
 
-export default class Home extends React.Component {
+export default class Home extends  React.Component<Iform> {
+    constructor(props : Iform) {
+        super(props);
+    }
   render() {
     return (
       <div className={styles.homeContainer}>
-            <Form/>
+            <Form
+                input ={ this.props.input }
+            />
       </div>
     );
   }
