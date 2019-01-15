@@ -12,6 +12,7 @@ export default class Home extends  React.Component<Iform> {
       <div className={styles.homeContainer}>
             <Form
                 input ={ this.props.input }
+                button={this.props.button}
             />
       </div>
     );

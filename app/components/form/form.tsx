@@ -20,10 +20,14 @@ export  class Form extends React.Component<Iform> {
                         value={this.props.input.value}
                         invalid={this.props.input.invalid}
                         shouldValidate={this.props.input.shouldValidate.required}
-                        touched={this.props.input.touched}/>
+                        touched={this.props.input.touched}
+                        changed={ this.props.input.change}
+                    />
                 </div>
                 <div className={styles.inputContainer}>
-                    <Button>submit </Button>
+                    <Button
+                        clicked = {this.props.button.submitOrder}>
+                        submit </Button>
                 </div>
             </div>
         )

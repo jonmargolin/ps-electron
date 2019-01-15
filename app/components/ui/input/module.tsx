@@ -5,6 +5,7 @@ export  default interface Iinput {
     invalid: boolean;
     shouldValidate: ShouldValidate;
     touched: boolean;
+    change : any;
 }
 export  interface ShouldValidate {
     required: boolean

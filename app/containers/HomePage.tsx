@@ -3,10 +3,21 @@ import { RouteComponentProps } from 'react-router';
 import Home from '../components/Home';
 import Iform from '../components/form/module';
 import Iinput from '../components/ui/input/module';
+import Ibutton from '../components/ui/button/moudle';
 
 export class HomePage extends React.Component<Iform> {
-
+    submitOrder = (): void => {
+    console.log('testt');
+    }
+    inputChangedHandler = (event: any, inputIdentifier: any): void => {
+    console.log(event);
+    }
     render() {
+        const fromBtn: Ibutton ={
+            submitOrder(): void {
+            console.log('testt');
+        }
+        }
         const inputFilde: Iinput ={
             elementConfig: {
                 type: 'text',
@@ -18,13 +29,16 @@ export class HomePage extends React.Component<Iform> {
                 required: true
             },
             touched: false,
-            value:''
+            value:'',
+            change: (event: any) => this.inputChangedHandler(event, 1)
         }
         return (
       <Home
           input={
               inputFilde
           }
+          button={fromBtn}
+
       />
     );
   }
