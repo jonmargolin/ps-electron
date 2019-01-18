@@ -5,7 +5,10 @@ export  default interface Iinput {
     invalid: boolean;
     shouldValidate: ShouldValidate;
     touched: boolean;
-    change : any;
+
+}
+export  interface IFinput extends  Iinput{
+    change: (event: any) => void
 }
 export  interface ShouldValidate {
     required: boolean
