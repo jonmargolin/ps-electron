@@ -14,11 +14,12 @@ export interface IProps extends RouteComponentProps<any> {
 
 export class Counter extends React.Component<IProps> {
   render() {
+      console.log(this.state);
     const { increment, incrementIfOdd, incrementAsync, decrement, counter } = this.props;
     return (
       <div>
         <div className={styles.backButton} data-tid="backButton">
-          <Link to="/">
+          <Link to="/counter">
             <i className="fa fa-arrow-left fa-3x" />
           </Link>
         </div>
