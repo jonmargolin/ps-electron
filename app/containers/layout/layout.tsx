@@ -8,6 +8,9 @@ import Error from '../../components/errors/error';
 import Home from '../../components/Home';
 import Counter from '../../components/Counter';
 import WooCommerceApi from '../../utils/wooCommerceApi';
+import RequestModule from '../../utils/requestModule';
+import {FilePath} from '../../utils/module';
+
 
 const Aux = (props: any) => {
     return props.children;
@@ -46,12 +49,26 @@ export class Layout extends React.Component <RouteComponentProps<any>, IState, I
         }
         return isValid
     }
- // check order number if order number invalid  change the route to error page
+ // check order number if order number is invalid  change the route to error page
+    //  if order number is valid get the product path form the json in the server. and crate array of product detailed.
+    // Todo add loader  when submit  the order number.
     submitOrder = (): void => {
      const orderNumber: Promise<number | number[]>  =  WooCommerceApi.checkOrder(this.state.input.value);
         orderNumber.then(value => {
+            // Todo crate  the error page and show the msg.
             if(value === 404 ) {
                 this.props.history.replace('/error');
+            }
+            else {
+                // Todo handel error respond of 404 and update the state when get the resound.
+               const order : number[] = value as number[];
+               const filePaths: FilePath [] = []
+               order.forEach((order)=>{
+                   const filePath : Promise<string > = RequestModule.getFilesPath(order);
+                   filePath.then(data => {
+                       filePaths.push(JSON.parse(data as string))
+                   })
+               })
             }
         });
     }

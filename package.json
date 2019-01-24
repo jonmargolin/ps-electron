@@ -166,6 +166,8 @@
     "electron-debug": "^1.1.0",
     "font-awesome": "^4.7.0",
     "history": "^4.6.1",
+    "mobx": "^5.9.0",
+    "mobx-react": "^5.4.3",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-redux": "^5.0.1",
