@@ -7,8 +7,8 @@ import CounterPage from './containers/CounterPage';
 export default () => (
   <App>
     <Switch>
-      <Route path="/counter" component={CounterPage} />
-      <Route path="/" component={HomePage} />
+      <Route path="/" component={CounterPage} />
+      <Route path="/counter" component={HomePage} />
     </Switch>
   </App>
 );

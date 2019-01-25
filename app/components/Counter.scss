@@ -1,9 +1,14 @@
 :local {
+  .home-container{
+    background-color: rgb(104, 69, 69) !important;
+  }
+  
   .backButton {
     position: absolute;
   }
 
   .counter {
+    color: rgb(32, 10, 10) !important;
     position: absolute;
     top: 30%;
     left: 45%;

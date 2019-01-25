@@ -1,18 +1,28 @@
 import * as React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect, Dispatch } from 'react-redux';
 import { Counter, IProps } from '../components/Counter';
-import * as CounterActions from '../actions/counter';
-import { IState } from '../reducers';
+import { RouteComponentProps } from 'react-router';
 
-function mapStateToProps(state: IState): Partial<IProps> {
-  return {
-    counter: state.counter
-  };
+export class CounterPage extends React.Component<IProps> {
+  constructor(props: IProps) {
+    super(props);
+  }
+
+  counterProps: IProps = { 
+    counter: 50,
+    reset: () => {
+      console.log('click');
+      
+      this.counterProps.counter = 0;
+    }
+  }
+
+  render() {
+    setInterval(() => {
+      if (this.counterProps.counter < 100)
+        this.counterProps.counter += 10;
+    }, 1000)
+    return (<Counter counter={this.counterProps.counter} reset={this.counterProps.reset}></Counter>);
+  }
 }
 
-function mapDispatchToProps(dispatch: Dispatch<IState>): Partial<IProps> {
-  return bindActionCreators(CounterActions as any, dispatch);
-}
-
-export default (connect(mapStateToProps, mapDispatchToProps)(Counter) as any as React.StatelessComponent<IProps>);
+export default (CounterPage as any as React.StatelessComponent<RouteComponentProps<any>>);
