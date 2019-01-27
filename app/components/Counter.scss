@@ -1,6 +1,9 @@
 :local {
-  .home-container{
-    background-color: rgb(104, 69, 69) !important;
+  .homeContainer{
+    background-image: url("../../resources/images/PNGs/Installer-New.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    height: inherit;
   }
   
   .backButton {
@@ -8,10 +11,7 @@
   }
 
   .counter {
-    color: rgb(32, 10, 10) !important;
-    position: absolute;
-    top: 30%;
-    left: 45%;
+    color: rgb(32, 10, 10) ;
     font-size: 10rem;
     font-weight: bold;
     letter-spacing: -.025em;
@@ -40,5 +40,12 @@
   .btn:hover {
     color: white;
     background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .progressBar {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
   }
 }

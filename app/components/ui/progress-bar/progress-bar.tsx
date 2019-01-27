@@ -5,18 +5,20 @@ export interface IProgressBar {
     progress: number;
 }
 
-export class ProgressBar extends React.Component<IProgressBar> {
-    constructor(props: IProgressBar) {
-        super(props);
-    }
+export const ProgressBar = (props: IProgressBar) => {
+        let progress = props.progress;
 
-    render() {
+        if (props.progress > 100) {
+            progress = 100;
+        }
+
         return (
-            <div className={styles.empty}>
-                <div className={styles.progress} style={{width: `${this.props.progress}%`}}></div>
-            </div>
+            <>
+                <div className={styles.empty}>
+                    <div className={styles.progress} style={{width: `${progress}%`}}></div>
+                </div>
+            </>
         );
-    }
 }
 
 export default ProgressBar;
