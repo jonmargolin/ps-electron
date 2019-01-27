@@ -1,10 +1,17 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import Home from '../../components/Home';
 import Iform from '../../components/form/module';
 import Iinput from '../../components/ui/input/module';
 import {IState} from './module';
-
+import { RouteComponentProps} from 'react-router-dom';
+const WooCommerceAPI = require('woocommerce-api');
+const WooCommerce = new WooCommerceAPI({
+    url:"http://psdev.pskiss.com",
+    consumerKey: "ck_3b7e4a7386f90018f5aa0427d40380fcd0f31d92",
+    consumerSecret: "cs_0a05dc92c5ddd8c3b84a1a5bd73fd91ac2be358c",
+    wpAPI: true,
+    version: 'wc/v1'
+})
 const inputFilde: Iinput ={
     elementConfig: {
         type: 'text',
@@ -18,7 +25,7 @@ const inputFilde: Iinput ={
     touched: false,
     value:'',
     }
-export class HomePage extends React.Component< Iform, IState> {
+export class HomePage extends React.Component<RouteComponentProps<any>,IState, Iform> {
     readonly state: IState = {input : inputFilde}
     inputChangedHandler = (event : any): void => {
         const input = {... this.state.input};
@@ -38,7 +45,16 @@ export class HomePage extends React.Component< Iform, IState> {
         return isValid
     }
     submitOrder = (): void => {
-        console.log('test')
+       // this.props.history.push('/counter')
+         WooCommerce.getAsync(`orders/${this.state.input.value}?filter[meta]=true`).then((result: any) => {
+            const res =  JSON.parse(result.body);
+         if (res.data && res.data.status === 404){
+
+           this.props.history.push('/error', res)
+         }
+         }).error((err: any)=>{
+           console.log(err)
+         })
     }
     render() {
         return (
@@ -57,4 +73,4 @@ export class HomePage extends React.Component< Iform, IState> {
   }
 }
 
-export default (HomePage as any as React.StatelessComponent<RouteComponentProps<any>>);
+export default  (HomePage as any as React.StatelessComponent<RouteComponentProps<any>>);

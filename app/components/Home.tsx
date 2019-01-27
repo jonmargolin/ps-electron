@@ -3,7 +3,7 @@ import Form  from  './../components/form/form';
 import Iform from './form/module';
 let styles = require('./Home.scss');
 
-export default class Home extends  React.Component<Iform> {
+export default class Home extends  React.Component<any> {
     constructor(props : Iform) {
         super(props);
     }
