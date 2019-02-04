@@ -1,7 +1,9 @@
 import * as React from "react";
 import ProgressBar, { ProgressText } from '../../components/ui/progress-bar/progress-bar';
 import Button from '../../components/ui/button/button';
-
+import {EMPTY} from 'rxjs';
+import {ajax} from 'rxjs/ajax';
+import {switchMap, catchError, ignoreElements } from 'rxjs/operators';
 export interface FilePath {
     file: string;
     path: string;
@@ -13,7 +15,7 @@ export interface IInstallerProps {
 }
 
 export interface IInstallerState {
-    filePaths:any;
+    filePaths:FilePath[];
     progress: number;
     progressText: ProgressText;
     isDone: boolean;
@@ -33,7 +35,25 @@ export class InstallerPage extends React.Component<IInstallerProps, IInstallerSt
     }
 
     fetchFiles() {
+        if (!this.state.filePaths || this.state.filePaths.length === 0) return;
+        
         // download all the files from this.state.filePaths
+        this.state.filePaths.map(
+            filePath => ajax({
+                url: encodeURI(filePath.url),
+                method: 'GET',
+                responseType: 'stream'
+            }).pipe(
+                switchMap((res) => {
+                    console.log('res', res)
+                    return EMPTY.pipe(ignoreElements());
+                }),
+                catchError((err) => {
+                    console.log(err)
+                    return EMPTY.pipe(ignoreElements());
+                })
+            ).subscribe()
+        );
     }
 
     setProgressText(progressText: ProgressText) {
