@@ -20,4 +20,15 @@
         border-radius: inherit;
         transition: width .1s ease-out;
     }
+
+    .textContainer {
+        margin: auto;
+    }
+
+    .progressText {
+        text-align: center;
+        font-size: 2rem;
+        color: black;
+        
+    }
 }

@@ -6,10 +6,9 @@ import {IState} from '../HomePage/module';
 import Iform from '../../components/form/module';
 import Error from '../../components/errors/error';
 import Home from '../../components/Home';
-import Counter from '../../components/Counter';
 import WooCommerceApi from '../../utils/wooCommerceApi';
 import RequestModule from '../../utils/requestModule';
-import {FilePath} from '../../utils/module';
+import { InstallerPage } from '../installer/installerPage';
 
 
 const Aux = (props: any) => {
@@ -30,7 +29,10 @@ const inputFilde: Iinput = {
 }
 
 export class Layout extends React.Component <RouteComponentProps<any>, IState, Iform> {
-    readonly state: IState = {input: inputFilde}
+    readonly state: IState = {
+        input: inputFilde,
+        filePaths: []
+    }
     inputChangedHandler = (event: any): void => {
         const input = {...this.state.input};
         input.value = event.target.value;
@@ -62,12 +64,12 @@ export class Layout extends React.Component <RouteComponentProps<any>, IState, I
             else {
                 // Todo handel error respond of 404 and update the state when get the resound.
                const order : number[] = value as number[];
-               const filePaths: FilePath [] = []
+            //    const filePaths: FilePath [] = []
                order.forEach((order)=>{
-                   const filePath : Promise<string > = RequestModule.getFilesPath(order);
-                   filePath.then(data => {
-                       filePaths.push(JSON.parse(data as string))
-                   })
+                   const filePath : Promise<string> = RequestModule.getFilesPath(order);
+                   filePath.then(data => JSON.parse(data))
+                   .then((paths) => this.setState({filePaths: paths}))
+                   .then(() => this.props.history.replace('/installer'))
                })
             }
         });
@@ -79,7 +81,7 @@ export class Layout extends React.Component <RouteComponentProps<any>, IState, I
                     <Router>
                         <Switch>
                             <Route exact path="/error" render={(props) => <Error  {...props} test={'test'}/>}/>
-                            <Route path="/counter" component={Counter}/>
+                            <Route path="/installer" render={(props) => <InstallerPage {...props} filePaths={this.state.filePaths}/>}/>
                             <Route path='/' render={(props) => <Home {...props} input={{
                                 touched: this.state.input.touched,
                                 shouldValidate: this.state.input.shouldValidate,
