@@ -1,9 +1,9 @@
 import * as React from "react";
 import ProgressBar, { ProgressText } from '../../components/ui/progress-bar/progress-bar';
+import { HttpClient } from '../../utils/httpClient';
+import { AjaxResponse } from 'rxjs/ajax';
 import Button from '../../components/ui/button/button';
-import {EMPTY} from 'rxjs';
-import {ajax} from 'rxjs/ajax';
-import {switchMap, catchError, ignoreElements } from 'rxjs/operators';
+
 export interface FilePath {
     file: string;
     path: string;
@@ -22,6 +22,7 @@ export interface IInstallerState {
 }
 
 export class InstallerPage extends React.Component<IInstallerProps, IInstallerState> {
+    http: HttpClient = new HttpClient();
     constructor(readonly props: IInstallerProps) {
         super(props);
         this.state = {
@@ -35,24 +36,28 @@ export class InstallerPage extends React.Component<IInstallerProps, IInstallerSt
     }
 
     fetchFiles() {
-        if (!this.state.filePaths || this.state.filePaths.length === 0) return;
-        
-        // download all the files from this.state.filePaths
-        this.state.filePaths.map(
-            filePath => ajax({
-                url: encodeURI(filePath.url),
-                method: 'GET',
-                responseType: 'stream'
-            }).pipe(
-                switchMap((res) => {
-                    console.log('res', res)
-                    return EMPTY.pipe(ignoreElements());
-                }),
-                catchError((err) => {
-                    console.log(err)
-                    return EMPTY.pipe(ignoreElements());
-                })
-            ).subscribe()
+        const filePaths = this.state.filePaths;
+        if (!filePaths || filePaths.length === 0) return;        
+        // download all the files from filePaths
+        filePaths.forEach(
+            filePath => {
+                const response = this.http.get(filePath.url, {responseType: 'blob'});
+                const logProgress = (loaded: number, total: number) => {
+                    console.log(`file: ${filePath.file} - ${loaded.toLocaleString()}/${total.toLocaleString()}`, `${(loaded * 100 / total).toLocaleString()}%`)
+                }
+                // subscribe to progress of current iteration
+                response.progress$.subscribe(
+                    next => logProgress(next.loaded, next.total),
+                    (err: any) => console.log('err ' + filePath.file, err),
+                    () => console.log('done ' + filePath.file)
+                )
+
+                // subscribe to the response of current iteration
+                response.response$.subscribe(
+                    (res: AjaxResponse) => console.log('res ' + filePath.file, res),
+                    (err: any) => console.log('suberr ' + filePath.file, err)
+                );
+            }
         );
     }
 
@@ -76,13 +81,11 @@ export class InstallerPage extends React.Component<IInstallerProps, IInstallerSt
         });
     }
 
-    // download stream
     // save stream tmp
     // extract the files to correct folder
     // remove all temp files
     // validate installation and remove temp files
     // show button
-
 
     onNext = () => {
         // navigate to finish page
@@ -100,7 +103,6 @@ export class InstallerPage extends React.Component<IInstallerProps, IInstallerSt
                         ? <Button clicked={this.onNext} /> 
                         : <ProgressBar progress={this.state.progress} onDone={this.onDone} progressText={this.state.progressText} />
                 }
-                
             </>
         );
     }
