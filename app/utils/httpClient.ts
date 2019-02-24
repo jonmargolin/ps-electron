@@ -1,25 +1,30 @@
 import { ajax, AjaxRequest, AjaxResponse } from 'rxjs/ajax';
-import { Observable, fromEvent } from 'rxjs';
+import { Observable, fromEvent, Subscriber } from 'rxjs';
 
-export interface HttpResponse {
-    response$: Observable<AjaxResponse>;
-    progress$: Observable<ProgressEvent>; 
+export interface HttpRequest {
+    path: string;
+    method: 'GET' | 'POST';
+    body?: any;
+    options?: any;
+    progress$?: Subscriber<ProgressEvent>;
 }
 
 export class HttpClient {
-    get(path:string, options?: any) {
-        return this.request(path, 'GET', null, options);
+    get(path:string, options?: any, progress$?: Subscriber<ProgressEvent>) {
+        return this.request({path, method: 'GET', options, progress$});
     };
 
-    post(path:string, body?: any, options?: any) {
-        return this.request(path, 'POST', body, options);
+    post(path:string, body?: any, options?: any, progress$?: Subscriber<ProgressEvent>) {
+        return this.request({path, method: 'POST', body, options, progress$});
     };
 
-    request(path: string, method: 'GET' | 'POST', body?: any, options?: any): HttpResponse {
+    request({path, method, body, options, progress$}: HttpRequest): Observable<AjaxResponse> {
         const auth = toBase64(`test:test1234`);
+        
         const xhr = new XMLHttpRequest();
         const getRequest = () => xhr;
-        const progress = fromEvent<ProgressEvent>(xhr, 'progress');
+        if (progress$)
+            fromEvent<ProgressEvent>(xhr, 'progress').subscribe(progress$)
         
         const request: AjaxRequest = {
             url: path,
@@ -32,10 +37,7 @@ export class HttpClient {
             ...options
         };
 
-        return {
-            response$: ajax(request),
-            progress$: progress
-        };
+        return ajax(request);
     }
 }
 

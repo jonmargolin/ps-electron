@@ -1,8 +1,7 @@
 import * as React from "react";
 import ProgressBar, { ProgressText } from '../../components/ui/progress-bar/progress-bar';
-import { HttpClient } from '../../utils/httpClient';
-import { AjaxResponse } from 'rxjs/ajax';
 import Button from '../../components/ui/button/button';
+import { InstallerHelper } from './installerHelper';
 
 export interface FilePath {
     file: string;
@@ -22,7 +21,7 @@ export interface IInstallerState {
 }
 
 export class InstallerPage extends React.Component<IInstallerProps, IInstallerState> {
-    http: HttpClient = new HttpClient();
+    helper = new InstallerHelper();
     constructor(readonly props: IInstallerProps) {
         super(props);
         this.state = {
@@ -31,34 +30,19 @@ export class InstallerPage extends React.Component<IInstallerProps, IInstallerSt
             progressText: ProgressText.Initializing,
             isDone: false
         }
-
+    }
+    
+    componentDidMount() {
         this.fetchFiles();
     }
 
     fetchFiles() {
         const filePaths = this.state.filePaths;
-        if (!filePaths || filePaths.length === 0) return;        
-        // download all the files from filePaths
-        filePaths.forEach(
-            filePath => {
-                const response = this.http.get(filePath.url, {responseType: 'blob'});
-                const logProgress = (loaded: number, total: number) => {
-                    console.log(`file: ${filePath.file} - ${loaded.toLocaleString()}/${total.toLocaleString()}`, `${(loaded * 100 / total).toLocaleString()}%`)
-                }
-                // subscribe to progress of current iteration
-                response.progress$.subscribe(
-                    next => logProgress(next.loaded, next.total),
-                    (err: any) => console.log('err ' + filePath.file, err),
-                    () => console.log('done ' + filePath.file)
-                )
+        if (!filePaths || filePaths.length === 0) return;
+        this.setProgressText(ProgressText.FetchingFiles);
 
-                // subscribe to the response of current iteration
-                response.response$.subscribe(
-                    (res: AjaxResponse) => console.log('res ' + filePath.file, res),
-                    (err: any) => console.log('suberr ' + filePath.file, err)
-                );
-            }
-        );
+        // download all the files from filePaths
+        this.helper.fetchFiles(filePaths);
     }
 
     setProgressText(progressText: ProgressText) {
@@ -81,7 +65,6 @@ export class InstallerPage extends React.Component<IInstallerProps, IInstallerSt
         });
     }
 
-    // save stream tmp
     // extract the files to correct folder
     // remove all temp files
     // validate installation and remove temp files
