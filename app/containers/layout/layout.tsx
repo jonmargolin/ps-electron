@@ -8,7 +8,7 @@ import Home from '../../components/Home';
 import WooCommerceApi from '../../utils/wooCommerceApi';
 import { InstallerPage } from '../installer/installerPage';
 import { HttpClient } from '../../utils/httpClient';
-import { merge } from 'rxjs';
+import { concat } from 'rxjs';
 
 const Aux = (props: any) => {
   return props.children;
@@ -69,13 +69,18 @@ export class Layout extends React.Component<RouteComponentProps<any>, IState> {
           order => this.http.get(
             `http://psdev.pskiss.com/wp-content/installer/winPath/${order}.json`
           )
-        ).map(res => res.response$);
+        );
 
-        merge(...orders$).subscribe(
-          (res) => this.setState({
-            filePaths: [...this.state.filePaths, ...res.response]
-          }),
-          () => this.props.history.push('/error'),
+        concat(...orders$).subscribe(
+          (res) => {
+            return this.setState({
+              filePaths: [...this.state.filePaths, ...res.response]
+            });
+          },
+          (err) => {
+            console.log('err:', err)
+            this.props.history.push('/error')
+          },
           () => this.props.history.push('/installer')
         );        
       }

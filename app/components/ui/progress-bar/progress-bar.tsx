@@ -3,6 +3,7 @@ const styles = require('./progress-bar.scss');
 
 export enum ProgressText {
     Initializing = 'Initializing',
+    FetchingFiles = 'Fetching Files...',
     Finalizing = 'Finalizing'
 }
 
