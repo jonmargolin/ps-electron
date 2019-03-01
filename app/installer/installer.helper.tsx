@@ -1,7 +1,7 @@
-import { HttpClient } from '../../utils/httpClient';
-import { FilePath } from './installerPage';
 import { from, Subscriber, EMPTY } from 'rxjs';
 import { concatMap, delay, map, catchError, ignoreElements } from 'rxjs/operators';
+import { FilePath } from './models/installer.model';
+import { HttpClient } from '../utils/httpClient';
 
 export class InstallerHelper {
     private _http = new HttpClient();
@@ -9,13 +9,13 @@ export class InstallerHelper {
     constructor() {}
 
     public fetchFiles(filePaths: FilePath[]) {
-        if (!filePaths || filePaths.length === 0) return;
+        if (!filePaths || filePaths.length === 0) return EMPTY.pipe(ignoreElements());
 
         const progress = new Subscriber<ProgressEvent>(
             next => this.handleProgress(next)
         );
         console.log(`%c*** START DOWNLOADING ***`, 'font-size: 2em; color: navy; font-weight: bold;');
-        from(filePaths).pipe(
+        return from(filePaths).pipe(
             concatMap(filePath => {
                 console.log(`%c*** START - ${filePath.file} ***`, 'font-size: 1.5em; color: blue; font-weight: bold;');
                 return this._http.get(filePath.url, {responseType: 'blob'}, progress).pipe(
@@ -35,10 +35,6 @@ export class InstallerHelper {
                 data.set('a', res.response as Blob, filePath.file);
                 return data.get('a') as File;
             })
-        ).subscribe(
-            res => console.log(`%c*** DONE DOWNLOADING FILE - ${res.name} ***`, 'font-size: 1.5em; color: green; font-weight: bold;'),
-            () => {},
-            () => console.log(`%c*** DONE DOWNLOADING ***`, 'font-size: 2em; color: gold; font-weight: bold;')
         );
     }
     

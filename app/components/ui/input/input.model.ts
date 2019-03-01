@@ -1,4 +1,4 @@
-export  default interface Iinput {
+export  default interface IInput {
     elementType: string;
     elementConfig: ElementConfig;
     value: string;
@@ -7,7 +7,7 @@ export  default interface Iinput {
     touched: boolean;
 
 }
-export  interface IFinput extends  Iinput{
+export  interface IInputChange extends  IInput{
     change: (event: any) => void
 }
 export  interface ShouldValidate {

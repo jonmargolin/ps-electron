@@ -1,11 +1,16 @@
 import * as React from 'react';
 import Input from './../ui/input/input';
-import Button from './../ui/button/button';
-import Iform from './../form/module';
+import { IButton, Button } from './../ui/button/button';
+import { IInputChange } from '../ui/input/input.model';
 let styles = require('./form.scss');
 
-export  class Form extends React.Component<Iform> {
-    constructor(props : Iform) {
+export interface IForm {
+    input: IInputChange;
+    button: IButton;
+}
+
+export  class Form extends React.Component<IForm> {
+    constructor(props : IForm) {
         super(props);
     }
     render() {
@@ -33,4 +38,3 @@ export  class Form extends React.Component<Iform> {
         )
     }
 }
-export  default  Form
