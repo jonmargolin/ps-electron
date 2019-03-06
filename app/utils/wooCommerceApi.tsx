@@ -1,3 +1,6 @@
+import { from, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 const WooCommerceAPI = require('woocommerce-api');
 const WooCommerce = new WooCommerceAPI({
     url:"http://psdev.pskiss.com",
@@ -8,19 +11,16 @@ const WooCommerce = new WooCommerceAPI({
 })
 
 export  default class WooCommerceApi {
-    public static async  checkOrder (value: string):Promise<number | number[]>  {
-        return new Promise <number | number[]>( (resolve, reject) => {
-        WooCommerce.getAsync(`orders/${value}?filter[meta]=true`).then((result: any) => {
-    const res =  JSON.parse(result.body);
-    if (res.data && res.data.status === 404){
-        resolve (res.data.status)
-    } else {
-        const orderNumbers: number[] =[]
-        res.line_items.forEach((item: any) => orderNumbers.push(item.product_id));
-        resolve(orderNumbers);
+    public static checkOrder (value: string): Observable<number[]>  {
+        return from(WooCommerce.getAsync(`orders/${value}?filter[meta]=true`)).pipe(
+            map((res: any) => JSON.parse(res.body)),
+            map(res => {
+                if (res.data && res.data.status === 404){
+                    throw new Error(`Order not found. error: ${res.data.status}`);
+                } else {
+                    return res.line_items.map((item: any) => item.product_id as number);
+                }
+            })
+        );
     }
-    }).error((err: any)=>{
-    reject(err)
-    })})
-}
 }

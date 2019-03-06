@@ -1,17 +1,6 @@
 import * as React from 'react';
+import { IProgressBar } from './progress-bar.model';
 const styles = require('./progress-bar.scss');
-
-export enum ProgressText {
-    Initializing = 'Initializing',
-    FetchingFiles = 'Fetching Files...',
-    Finalizing = 'Finalizing'
-}
-
-export interface IProgressBar {
-    progress: number;
-    progressText?: ProgressText;
-    onDone: () => void;
-}
 
 export const ProgressBar = (props: IProgressBar) => {
         let progress = props.progress;
@@ -32,5 +21,3 @@ export const ProgressBar = (props: IProgressBar) => {
             </>
         );
 }
-
-export default ProgressBar;
